@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import { GeneralPrompt, VariablePrompt, RegeneratePrompt, MoreRecommendationsPrompt} from './GeminiPrompt';
 import { buildErrorMessage, parseResponseWithError } from "./ResponseParser";
 
-const GEMINI_API_KEY = import.meta.env.GEMINI_API_KEY;
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 const genAI = new GoogleGenAI({apiKey: GEMINI_API_KEY});
 
