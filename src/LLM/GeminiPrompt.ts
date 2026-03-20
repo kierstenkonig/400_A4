@@ -17,7 +17,8 @@ Each object in the array must follow this exact structure:
 
 If no suitable recommendations exist for the given preferences, return an empty array: []`;
 
-export function VariablePrompt(mood, genre, movies, books) {
+
+export function VariablePrompt(mood: string, genre: string, movies: boolean, books: boolean): string {
   return `User preferences:
 - Mood: ${mood}
 - Genre: ${genre}
@@ -28,7 +29,7 @@ export const RegeneratePrompt =
   `The user wants a completely different set of recommendations.
 Provide 3 new items that do NOT repeat any previously recommended titles.`;
 
-export function MoreRecommendationsPrompt(likedRecommendation) {
+export function MoreRecommendationsPrompt(likedRecommendation:string): string {
   return `The user enjoyed this recommendation: "${likedRecommendation}"
 Provide 3 new items similar to it that were NOT in the previous recommendations.`;
 }

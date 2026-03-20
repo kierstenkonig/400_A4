@@ -7,7 +7,7 @@
  *  - Returns null on unrecoverable parse error so caller can show error message
  */
 
-export function parseResponse(rawText) {
+export function parseResponse(rawText: string) {
   try {
     const clean = rawText
       .replace(/```json|```/gi, '')  // strip markdown fences if Gemini adds them anyway
@@ -28,14 +28,22 @@ export function parseResponse(rawText) {
       reason:      typeof item.reason      === 'string' ? item.reason      : '',
     }));
 
-  } catch (err) {
-    console.error('ResponseParser failed:', err.message, '\nRaw text:', rawText);
+  } catch (err: unknown) {
+    console.error('ResponseParser failed:', (err as Error).message, '\nRaw text:', rawText);
     return null; // null = unrecoverable, caller should show error banner
   }
 }
 
-export function buildErrorMessage(context) {
-  const messages = {
+interface ErrorMessages {
+  no_results: string;
+  parse_failed: string;
+  api_error: string;
+}
+
+type ErrorContext = keyof ErrorMessages;
+
+export function buildErrorMessage(context: ErrorContext): string {
+  const messages: ErrorMessages = {
     no_results:   'No recommendations found for those preferences. Try a different mood or genre.',
     parse_failed: 'We had trouble reading the AI response. Please try again.',
     api_error:    'Could not reach the recommendation service. Please try again shortly.',

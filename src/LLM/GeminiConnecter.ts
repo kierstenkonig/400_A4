@@ -1,12 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
-import { dotenv } from 'dotenv';
-import { GeneralPrompt, VariablePrompt } from './GeminiPrompt';
+import { GeneralPrompt, VariablePrompt, RegeneratePrompt, MoreRecommendationsPrompt} from './GeminiPrompt';
 
+const GEMINI_API_KEY = import.meta.env.GEMINI_API_KEY;
 
-dotenv.config();
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+const genAI = new GoogleGenAI({apiKey: GEMINI_API_KEY});
 
 /**
  * GeminiConnecter — handles all three LLM request cases.
@@ -15,7 +12,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
  * @param {string | null} likedRecommendation - only used for "similar" case
  * @param {string[] } previousTitles - used for "regenerate" to avoid repeats
  */
-const GeminiConnecter = async (requestType, preferences, likedRecommendation = null, previousTitles = []) => {
+const GeminiConnecter = async (requestType: "initial" | "regenerate" | "similar", preferences: { mood: string; genre: string; movies: boolean; books: boolean }, likedRecommendation: string | null = null, previousTitles: string[] = []) => {
   const { mood, genre, movies, books } = preferences;
 
   // Build system + user prompt based on request type
@@ -35,7 +32,7 @@ const GeminiConnecter = async (requestType, preferences, likedRecommendation = n
       userPrompt =
         VariablePrompt(mood, genre, movies, books) +
         "\n\n" +
-        MoreRecommendationsPrompt(likedRecommendation);
+        (likedRecommendation ? MoreRecommendationsPrompt(likedRecommendation) : "");
       break;
 
     case "initial":
@@ -47,13 +44,12 @@ const GeminiConnecter = async (requestType, preferences, likedRecommendation = n
   const fullPrompt = GeneralPrompt + "\n\n" + userPrompt;
 
   try {
-    const result = await model.generateContent(fullPrompt);
-    const response = result.response;
-    const text = response.text();
+    const response = await genAI.models.generateContent({model: "gemini-3-flash-preview", contents: fullPrompt});
+    const text = response.text;
     return { success: true, text };
-  } catch (error) {
-    console.error("Gemini API error:", error);
-    return { success: false, error: error.message || "LLM request failed" };
+  } catch (err : unknown) {
+    console.error("Gemini API error:", err);
+    return { success: false, error: (err as Error).message || "LLM request failed" };
   }
 };
 
