@@ -50,3 +50,25 @@ export function buildErrorMessage(context: ErrorContext): string {
   };
   return messages[context] ?? 'Something went wrong. Please try again.';
 }
+
+interface ParseResult {
+  data: ReturnType<typeof parseResponse> | null;
+  errorMessage: string | null;
+}
+
+export function parseResponseWithError(rawText: string): ParseResult {
+  const data = parseResponse(rawText);
+
+  if (data === null) {
+    // unrecoverable parse error
+    return { data: null, errorMessage: buildErrorMessage('parse_failed') };
+  }
+
+  if (data.length === 0) {
+    // no results returned
+    return { data: null, errorMessage: buildErrorMessage('no_results') };
+  }
+
+  // successful parse
+  return { data, errorMessage: null };
+}
