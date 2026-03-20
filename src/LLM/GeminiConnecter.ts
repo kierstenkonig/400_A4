@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { GeneralPrompt, VariablePrompt, RegeneratePrompt, MoreRecommendationsPrompt} from './GeminiPrompt';
+import { buildErrorMessage, parseResponseWithError } from "./ResponseParser";
 
 const GEMINI_API_KEY = import.meta.env.GEMINI_API_KEY;
 
@@ -45,11 +46,18 @@ const GeminiConnecter = async (requestType: "initial" | "regenerate" | "similar"
 
   try {
     const response = await genAI.models.generateContent({model: "gemini-3-flash-preview", contents: fullPrompt});
-    const text = response.text;
-    return { success: true, text };
+    
+    if (typeof response.text !== "undefined") {
+      const parsedResult = parseResponseWithError(response.text);
+      if (parsedResult.errorMessage) {
+        return { success: false, error: parsedResult.errorMessage };
+      }
+      return { success: true, recommendations: parsedResult.data };
+    }
+
   } catch (err : unknown) {
     console.error("Gemini API error:", err);
-    return { success: false, error: (err as Error).message || "LLM request failed" };
+    return { success: false, error: buildErrorMessage("api_error")};
   }
 };
 
