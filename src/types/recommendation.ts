@@ -1,11 +1,11 @@
-export type RecommendationType = "movie" | "book";
-
 export type RecommendationItem = {
-  id: string;
   title: string;
+  type: string;
+  genre?: string;
+  year?: string;
+  author?: string;
   description: string;
-  link: string;
-  type: RecommendationType;
+  reason?: string;
 };
 
 export type RecommendationResponse = {
