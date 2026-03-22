@@ -6,6 +6,7 @@ export type RecommendationItem = {
   author?: string;
   description: string;
   reason?: string;
+  link?: string;
 };
 
 export type RecommendationResponse = {

@@ -14,6 +14,7 @@ export interface ParsedRecommendation {
   author: string;
   description: string;
   reason: string;
+  link: string;
 }
 
 export interface ParsedRecommendationGroups {
@@ -46,6 +47,7 @@ export function parseResponse(rawText: string): ParsedRecommendationGroups | nul
       author: typeof item.author === "string" ? item.author : "",
       description: typeof item.description === "string" ? item.description : "",
       reason: typeof item.reason === "string" ? item.reason : "",
+      link: typeof item.link === "string" ? item.link : "",
     }));
 
     return {

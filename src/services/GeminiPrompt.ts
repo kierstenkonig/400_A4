@@ -13,7 +13,43 @@ Each object in the array must follow this exact structure:
   "author": "string (books only, otherwise empty string)",
   "description": "string, 50 words or less describing the plot",
   "reason": "string, 50 words or less explaining why it matches the user's preferences"
+  "link": "string URL to IMDb (movies) or Goodreads (books)"
 }
+
+Ensure links are real and valid URLS.
+Example response:
+[
+  {
+    "title": "Inception",
+    "type": "movie",
+    "genre": "Sci-Fi",
+    "year": "2010",
+    "author": "",
+    "description": "A thief enters people's dreams to steal secrets but is tasked with planting an idea instead.",
+    "reason": "A mind-bending sci-fi film great for a thoughtful or curious mood.",
+    "link": "https://www.imdb.com/title/tt1375666/"
+  },
+  {
+    "title": "The Hobbit",
+    "type": "book",
+    "genre": "Fantasy",
+    "year": "1937",
+    "author": "J.R.R. Tolkien",
+    "description": "Bilbo Baggins goes on an adventure with dwarves to reclaim their homeland.",
+    "reason": "A light fantasy adventure perfect for an adventurous mood.",
+    "link": "https://www.goodreads.com/book/show/5907.The_Hobbit"
+  },
+  {
+    "title": "Interstellar",
+    "type": "movie",
+    "genre": "Sci-Fi",
+    "year": "2014",
+    "author": "",
+    "description": "Astronauts travel through a wormhole to find a new home for humanity.",
+    "reason": "Emotional and thought-provoking sci-fi for a reflective mood.",
+    "link": "https://www.imdb.com/title/tt0816692/"
+  }
+]
 
 If no suitable recommendations exist for the given preferences, return an empty array: []`;
 

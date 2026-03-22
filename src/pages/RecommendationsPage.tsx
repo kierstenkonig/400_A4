@@ -36,6 +36,7 @@ function normalizeItem(
     author: item.author ?? "",
     description: item.description ?? "",
     reason: item.reason ?? "",
+    link: item.link ?? "",
   };
 }
 
@@ -57,7 +58,9 @@ function RecommendationsPage() {
   const navigate = useNavigate();
   const query = searchParams.get("query") || "";
 
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>(
+  () => (localStorage.getItem("theme") as Theme) ?? "light");
+
   const [recommendations, setRecommendations] =
     useState<RecommendationResponse>(emptyRecommendations);
   const [loading, setLoading] = useState(false);
@@ -71,7 +74,11 @@ function RecommendationsPage() {
   };
 
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    setTheme((prevTheme) => {
+      const next = prevTheme === "light" ? "dark" : "light";
+      localStorage.setItem("theme", next);
+      return next;
+    });
   };
 
   const handleChangePreferences = () => {
@@ -131,6 +138,11 @@ function RecommendationsPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    document.body.classList.toggle("dark", theme === "dark");
+    document.body.classList.toggle("light", theme === "light");
+  }, [theme]);
 
   const handleMoreLikeThis = async (item: RecommendationItem) => {
     try {
@@ -306,6 +318,19 @@ function RecommendationRow({
         {item.reason && (
           <p>
             <strong>Why it fits:</strong> {item.reason}
+          </p>
+        )}
+        {item.link && (
+          <p>
+            <strong>Link:</strong>{" "}
+            <a
+              href={item.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "blue", textDecoration: "none" }}
+            >
+              {item.link}
+            </a>
           </p>
         )}
       </div>

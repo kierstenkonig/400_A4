@@ -1,12 +1,15 @@
 import { useState, useEffect, type KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
-import "../App.css";
+import "../Home.css";
 
 function HomePage() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(false);
+
+  const [darkMode, setDarkMode] = useState(
+    () => localStorage.getItem("theme") === "dark"
+  );
 
   const handleSearch = () => {
     if (search.trim() !== "") {
@@ -15,17 +18,13 @@ function HomePage() {
   };
 
   useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add("dark");
-      document.body.classList.remove("light");
-    } else {
-      document.body.classList.add("light");
-      document.body.classList.remove("dark");
-    }
+    document.body.classList.toggle("dark", darkMode);
+    document.body.classList.toggle("light", !darkMode);
+    localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
 
   return (
-    <div className="pageWrapper">
+    <div className={`pageWrapper ${darkMode ? "dark" : "light"}`}>
       <button
         onClick={() => setDarkMode(!darkMode)}
         className="themeToggleButton"
